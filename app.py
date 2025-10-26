@@ -17,32 +17,20 @@ def load_model():
     """Load model dan label encoders yang sudah ditraining"""
     global model, label_encoders
     try:
-        print("🔍 Checking for model files...")
-        
-        # List all files in current directory
-        files = os.listdir('.')
-        print(f"📁 Available files: {files}")
-        
         # Check if files exist
         if not os.path.exists('math_performance_model.pkl'):
             print("❌ File model tidak ditemukan: math_performance_model.pkl")
-            print(f"📁 Current directory: {os.getcwd()}")
             return False
         if not os.path.exists('label_encoders.pkl'):
             print("❌ File label encoders tidak ditemukan: label_encoders.pkl")
             return False
             
-        print("📦 Loading model files...")
         model = joblib.load('math_performance_model.pkl')
         label_encoders = joblib.load('label_encoders.pkl')
         print("✅ Model dan label encoders berhasil dimuat")
-        print(f"📊 Model type: {type(model)}")
-        print(f"🔢 Label encoders keys: {list(label_encoders.keys())}")
         return True
     except Exception as e:
         print(f"❌ Gagal memuat model: {e}")
-        import traceback
-        traceback.print_exc()
         return False
 
 @app.route('/')
@@ -118,8 +106,6 @@ def predict():
 
 # Load model saat aplikasi dimulai
 print("🚀 Memulai aplikasi...")
-print(f"📁 Working directory: {os.getcwd()}")
-print(f"📋 Files in directory: {os.listdir('.')}")
 
 if not load_model():
     print("❌ Gagal memuat model, aplikasi akan tetap berjalan dengan error handling")
