@@ -57,6 +57,9 @@ README.md
 DEPLOYMENT.md
 *.md
 
+# Keep dataset file
+!dataset_mahasiswa.csv
+
 # Railway specific
 railway.json
 Procfile

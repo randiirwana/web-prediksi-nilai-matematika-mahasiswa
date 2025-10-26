@@ -20,6 +20,11 @@ def load_data_and_model():
     """Load dataset dan model"""
     print("📊 Memuat dataset dan model...")
     
+    # Check if dataset exists
+    if not os.path.exists('dataset_mahasiswa.csv'):
+        print("⚠️ Dataset tidak ditemukan, menggunakan data dummy...")
+        return create_dummy_data()
+    
     # Load dataset
     df = pd.read_csv('dataset_mahasiswa.csv')
     
@@ -31,6 +36,46 @@ def load_data_and_model():
     df['math_performance'] = df['math score'].apply(lambda x: 1 if x >= 70 else 0)
     
     return df, model, label_encoders
+
+def create_dummy_data():
+    """Create dummy data for chart generation when dataset is not available"""
+    print("🔧 Membuat data dummy untuk grafik...")
+    
+    # Create dummy dataframe with same structure
+    np.random.seed(42)
+    n_samples = 1000
+    
+    data = {
+        'gender': np.random.choice(['male', 'female'], n_samples),
+        'race/ethnicity': np.random.choice(['group A', 'group B', 'group C', 'group D', 'group E'], n_samples),
+        'parental level of education': np.random.choice(['some high school', 'high school', 'some college', 'associate\'s degree', 'bachelor\'s degree', 'master\'s degree'], n_samples),
+        'lunch': np.random.choice(['standard', 'free/reduced'], n_samples),
+        'test preparation course': np.random.choice(['none', 'completed'], n_samples),
+        'reading score': np.random.normal(70, 15, n_samples),
+        'writing score': np.random.normal(70, 15, n_samples),
+        'math score': np.random.normal(70, 15, n_samples)
+    }
+    
+    df = pd.DataFrame(data)
+    df['math_performance'] = df['math score'].apply(lambda x: 1 if x >= 70 else 0)
+    
+    # Create dummy model
+    X = df.drop(['math score', 'math_performance'], axis=1)
+    y = df['math_performance']
+    
+    # Encode categorical variables
+    X_encoded = X.copy()
+    le_dict = {}
+    for col in X_encoded.select_dtypes(include=['object']).columns:
+        le = LabelEncoder()
+        X_encoded[col] = le.fit_transform(X_encoded[col])
+        le_dict[col] = le
+    
+    # Train simple model
+    model = DecisionTreeClassifier(max_depth=5, random_state=42)
+    model.fit(X_encoded, y)
+    
+    return df, model, le_dict
 
 def plot_feature_importance(model):
     """Plot feature importance"""
