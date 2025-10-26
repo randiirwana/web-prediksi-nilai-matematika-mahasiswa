@@ -16,11 +16,11 @@ railway login
 ## 🔧 Konfigurasi Project
 
 ### File-file yang Dibutuhkan:
-- ✅ `Procfile` - Menentukan perintah untuk menjalankan aplikasi
+- ✅ `Dockerfile` - Konfigurasi Docker untuk build yang konsisten
 - ✅ `requirements.txt` - Dependencies Python
-- ✅ `runtime.txt` - Versi Python
-- ✅ `railway.json` - Konfigurasi Railway
+- ✅ `railway.json` - Konfigurasi Railway (menggunakan Dockerfile)
 - ✅ `app.py` - Aplikasi Flask
+- ✅ `.dockerignore` - File yang diabaikan saat build Docker
 
 ### Struktur Project:
 ```
@@ -36,9 +36,9 @@ TA-05/
 │   └── score_distribution.png
 ├── math_performance_model.pkl
 ├── label_encoders.pkl
-├── Procfile
+├── Dockerfile
+├── .dockerignore
 ├── requirements.txt
-├── runtime.txt
 └── railway.json
 ```
 
@@ -123,8 +123,8 @@ TA-05/
    - Generate ulang jika perlu: `python plot_charts.py`
 
 3. **Build Time**
-   - Build pertama: ~3-5 menit
-   - Build berikutnya: ~1-2 menit
+   - Build pertama dengan Dockerfile: ~5-8 menit
+   - Build berikutnya: ~2-3 menit (dengan Docker layer caching)
 
 ## 🎉 Selesai!
 
