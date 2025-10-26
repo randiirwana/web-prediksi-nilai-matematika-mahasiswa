@@ -32,5 +32,15 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
 
+# Create startup script
+RUN echo '#!/bin/bash\n\
+echo "🚀 Starting application..."\n\
+echo "📁 Working directory: $(pwd)"\n\
+echo "📋 Files: $(ls -la)"\n\
+echo "🐍 Python version: $(python --version)"\n\
+echo "📦 Installed packages: $(pip list | grep -E "(Flask|pandas|scikit-learn)")"\n\
+echo "🌐 Starting gunicorn..."\n\
+exec gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --timeout 120 --access-logfile - --error-logfile - app:app' > /app/start.sh && chmod +x /app/start.sh
+
 # Run the application
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 app:app"]
+CMD ["/app/start.sh"]
