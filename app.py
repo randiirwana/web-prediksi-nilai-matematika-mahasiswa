@@ -17,6 +17,14 @@ def load_model():
     """Load model dan label encoders yang sudah ditraining"""
     global model, label_encoders
     try:
+        # Check if files exist
+        if not os.path.exists('math_performance_model.pkl'):
+            print("❌ File model tidak ditemukan: math_performance_model.pkl")
+            return False
+        if not os.path.exists('label_encoders.pkl'):
+            print("❌ File label encoders tidak ditemukan: label_encoders.pkl")
+            return False
+            
         model = joblib.load('math_performance_model.pkl')
         label_encoders = joblib.load('label_encoders.pkl')
         print("✅ Model dan label encoders berhasil dimuat")
@@ -30,6 +38,11 @@ def index():
     """Halaman utama"""
     return render_template('index.html')
 
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    return jsonify({'status': 'ok', 'model_loaded': model is not None})
+
 @app.route('/graphs')
 def graphs():
     """Halaman grafik"""
@@ -39,6 +52,10 @@ def graphs():
 def predict():
     """API endpoint untuk prediksi performa matematika"""
     try:
+        # Check if model is loaded
+        if model is None or label_encoders is None:
+            return jsonify({'error': 'Model belum dimuat. Silakan coba lagi dalam beberapa saat.'}), 503
+            
         # Ambil data dari form
         data = request.get_json()
         
@@ -88,7 +105,8 @@ def predict():
 
 
 # Load model saat aplikasi dimulai
-load_model()
+if not load_model():
+    print("❌ Gagal memuat model, aplikasi akan tetap berjalan dengan error handling")
 
 if __name__ == '__main__':
     # Development server
